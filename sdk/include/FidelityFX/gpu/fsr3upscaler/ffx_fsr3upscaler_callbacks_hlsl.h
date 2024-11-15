@@ -852,17 +852,13 @@ FfxFloat32x3 LoadPrevPostAlpha(FFX_PARAMETER_IN FFX_MIN16_I2 iPxPos)
 }
 #endif
 
-#if defined(FSR3UPSCALER_BIND_UAV_AUTOREACTIVE) && \
-    defined(FSR3UPSCALER_BIND_UAV_AUTOCOMPOSITION)
+#if defined(FSR3UPSCALER_BIND_UAV_AUTOREACTIVE)
 
 RWTexture2D<float> rw_output_autoreactive       : FFX_FSR3UPSCALER_DECLARE_UAV(FSR3UPSCALER_BIND_UAV_AUTOREACTIVE);
-RWTexture2D<float> rw_output_autocomposition    : FFX_FSR3UPSCALER_DECLARE_UAV(FSR3UPSCALER_BIND_UAV_AUTOCOMPOSITION);
 
 void StoreAutoReactive(FFX_PARAMETER_IN FFX_MIN16_I2 iPxPos, FFX_PARAMETER_IN FFX_MIN16_F2 fReactive)
 {
     rw_output_autoreactive[iPxPos] = fReactive.x;
-
-    rw_output_autocomposition[iPxPos] = fReactive.y;
 }
 #endif
 

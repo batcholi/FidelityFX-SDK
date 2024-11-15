@@ -22,6 +22,9 @@
 
 #version 450
 
+#define FFX_GPU
+#define FFX_GLSL
+
 #extension GL_GOOGLE_include_directive : require
 #extension GL_EXT_samplerless_texture_functions : require
 

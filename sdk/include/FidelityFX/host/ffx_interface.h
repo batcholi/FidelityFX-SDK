@@ -26,6 +26,117 @@
 #include <FidelityFX/host/ffx_types.h>
 #include <FidelityFX/host/ffx_error.h>
 
+#ifndef _WIN32
+#define _countof(_Array) (sizeof(_Array) / sizeof(_Array[0]))
+
+#include <wchar.h>
+#include <cwchar>
+#include <stdexcept>
+#include <cstring>
+#include <cstdlib>
+#include <cerrno>
+#include <cstdio>
+#include <cstdarg>
+
+int wcscpy_s(wchar_t* dest, size_t dest_size, const wchar_t* src) {
+    // Validate the destination and source pointers
+    if (!dest || !src) {
+        return EINVAL; // Invalid parameter
+    }
+
+    // Check if the destination buffer is big enough
+    size_t src_len = std::wcslen(src);
+    if (src_len + 1 > dest_size) { // +1 for the null terminator
+        return ERANGE; // Buffer too small
+    }
+
+    // Copy the string and ensure null-termination
+    std::wmemcpy(dest, src, src_len + 1); // include null terminator
+    return 0; // Success
+}
+void wcscpy_s(wchar_t* dest, const wchar_t* src) {
+    wcscpy(dest, src);
+}
+
+int strcpy_s(char* dest, size_t dest_size, const char* src) {
+    // Validate the destination and source pointers
+    if (!dest || !src) {
+        return EINVAL; // Invalid parameter
+    }
+
+    // Check if the destination buffer is big enough
+    size_t src_len = std::strlen(src);
+    if (src_len + 1 > dest_size) { // +1 for the null terminator
+        return ERANGE; // Buffer too small
+    }
+
+    // Copy the string and ensure null-termination
+    std::memcpy(dest, src, src_len + 1); // include null terminator
+    return 0; // Success
+}
+
+int wcstombs_s(size_t* pReturnValue, char* dest, size_t dest_size, const wchar_t* src, size_t max) {
+    // Validate parameters
+    if (!dest || !src || !pReturnValue) {
+        if (pReturnValue) *pReturnValue = (size_t)-1;
+        return EINVAL; // Invalid parameter
+    }
+
+    // Set the return value initially to zero
+    *pReturnValue = 0;
+
+    // Check if the destination buffer is too small
+    size_t src_len = std::wcslen(src);
+    if (dest_size < max + 1 || src_len < max) { // Need room for null terminator
+        return ERANGE; // Buffer too small
+    }
+
+    // Perform the conversion with null-termination
+    size_t result = std::wcstombs(dest, src, max);
+    if (result == (size_t)-1) {
+        *pReturnValue = (size_t)-1;
+        return EILSEQ; // Conversion error
+    }
+
+    // Null-terminate the result if space allows
+    if (result < dest_size) {
+        dest[result] = '\0';
+    }
+
+    // Set the return value to the number of bytes written
+    *pReturnValue = result;
+    return 0; // Success
+}
+
+int sprintf_s(char* dest, size_t dest_size, const char* format, ...) {
+    // Validate parameters
+    if (!dest || !format) {
+        return EINVAL; // Invalid parameter
+    }
+
+    // Initialize the variable argument list
+    va_list args;
+    va_start(args, format);
+
+    // Use snprintf to safely format the string with bounds checking
+    int result = std::vsnprintf(dest, dest_size, format, args);
+
+    // End the variable argument list
+    va_end(args);
+
+    // Check if the output was truncated
+    if (result < 0 || (size_t)result >= dest_size) {
+        if (dest_size > 0) {
+            dest[0] = '\0'; // Null-terminate the destination buffer
+        }
+        return ERANGE; // Buffer too small
+    }
+
+    return 0; // Success
+}
+
+#endif
+
 #if defined(__cplusplus)
 #define FFX_CPU
 extern "C" {

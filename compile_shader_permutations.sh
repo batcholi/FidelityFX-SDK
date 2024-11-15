@@ -1,0 +1,13 @@
+cd `dirname $0`
+PWD=`pwd`
+wine sdk/tools/binary_store/FidelityFX_SC.exe \
+-output="$PWD/compiled_shaders" -compiler=glslang -reflection \
+-DFFX_FSR3UPSCALER_OPTION_REPROJECT_USE_LANCZOS_TYPE={0, 1} \
+-DFFX_FSR3UPSCALER_OPTION_HDR_COLOR_INPUT={0, 1} \
+-DFFX_FSR3UPSCALER_OPTION_LOW_RESOLUTION_MOTION_VECTORS={0, 1} \
+-DFFX_FSR3UPSCALER_OPTION_JITTERED_MOTION_VECTORS={0, 1} \
+-DFFX_FSR3UPSCALER_OPTION_INVERTED_DEPTH={0, 1} \
+-DFFX_FSR3UPSCALER_OPTION_APPLY_SHARPENING={0, 1} \
+-V -S comp --target-env vulkan1.3 \
+-I"$PWD/sdk/include/FidelityFX/gpu" \
+$1

@@ -324,8 +324,10 @@ static FfxErrorCode patchResourceBindings(FfxPipelineState* inoutPipeline)
             if (0 == wcscmp(srvTextureBindingTable[mapIndex].name, inoutPipeline->srvTextureBindings[srvIndex].name))
                 break;
         }
-        if (mapIndex == _countof(srvTextureBindingTable))
+        if (mapIndex == _countof(srvTextureBindingTable)) {
+            std::wcerr << "'" << inoutPipeline->srvTextureBindings[srvIndex].name << "' not found in srvTextureBindingTable" << std::endl;
             return FFX_ERROR_INVALID_ARGUMENT;
+        }
 
         inoutPipeline->srvTextureBindings[srvIndex].resourceIdentifier = srvTextureBindingTable[mapIndex].index;
     }
@@ -338,8 +340,10 @@ static FfxErrorCode patchResourceBindings(FfxPipelineState* inoutPipeline)
             if (0 == wcscmp(uavTextureBindingTable[mapIndex].name, inoutPipeline->uavTextureBindings[uavIndex].name))
                 break;
         }
-        if (mapIndex == _countof(uavTextureBindingTable))
+        if (mapIndex == _countof(uavTextureBindingTable)) {
+            std::wcerr << "'" << inoutPipeline->uavTextureBindings[uavIndex].name << "' not found in uavTextureBindingTable" << std::endl;
             return FFX_ERROR_INVALID_ARGUMENT;
+        }
 
         inoutPipeline->uavTextureBindings[uavIndex].resourceIdentifier = uavTextureBindingTable[mapIndex].index;
     }
@@ -352,8 +356,10 @@ static FfxErrorCode patchResourceBindings(FfxPipelineState* inoutPipeline)
             if (0 == wcscmp(constantBufferBindingTable[mapIndex].name, inoutPipeline->constantBufferBindings[cbIndex].name))
                 break;
         }
-        if (mapIndex == _countof(constantBufferBindingTable))
+        if (mapIndex == _countof(constantBufferBindingTable)) {
+            std::wcerr << "'" << inoutPipeline->constantBufferBindings[cbIndex].name << "' not found in constantBufferBindingTable" << std::endl;
             return FFX_ERROR_INVALID_ARGUMENT;
+        }
 
         inoutPipeline->constantBufferBindings[cbIndex].resourceIdentifier = constantBufferBindingTable[mapIndex].index;
     }

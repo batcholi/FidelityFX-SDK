@@ -23,7 +23,10 @@
 #pragma once
 #include <ffx_api/ffx_api.hpp>
 #include <ffx_api/ffx_api_types.h>
-#include <FidelityFx/host/ffx_types.h>
+#include <FidelityFX/host/ffx_types.h>
+#include <stdlib.h>
+#include <string.h>
+#include <bit>
 
 #define VERIFY(_cond, _retcode) \
     if (!(_cond)) return _retcode
@@ -58,7 +61,7 @@ struct Allocator
     T* construct(Args&&... args)
     {
         void* addr = alloc(sizeof(T));
-        return ::new(addr) T(std::forward<Args>(args)...);
+        return new(addr) T(std::forward<Args>(args)...);
     }
 };
 

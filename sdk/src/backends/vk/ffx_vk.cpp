@@ -31,9 +31,10 @@
 #include <windows.h>
 #else
 #include <codecvt>  // this is deprecated so it's just a fallback solution
+#include <string.h>
+#include <locale>
+#include <math.h>
 #endif  // _WIN32
-
-#include <vulkan/vulkan.h>
 
 // prototypes for functions in the interface
 FfxVersionNumber       GetSDKVersionVK(FfxInterface* backendInterface);
@@ -77,10 +78,14 @@ constexpr uint32_t name##_BINDING_SHIFT     = shift; \
 constexpr wchar_t* name##_BINDING_SHIFT_STR = L#shift;
 
 // put it there for now
-BINDING_SHIFT(TEXTURE, 0);
-BINDING_SHIFT(SAMPLER, 1000);
-BINDING_SHIFT(UNORDERED_ACCESS_VIEW, 2000);
-BINDING_SHIFT(CONSTANT_BUFFER, 3000);
+// BINDING_SHIFT(TEXTURE, 0);
+constexpr uint32_t TEXTURE_BINDING_SHIFT = 0; static const wchar_t* TEXTURE_BINDING_SHIFT_STR = L"0";
+// BINDING_SHIFT(SAMPLER, 1000);
+constexpr uint32_t SAMPLER_BINDING_SHIFT = 1000; static const wchar_t* SAMPLER_BINDING_SHIFT_STR = L"1000";
+// BINDING_SHIFT(UNORDERED_ACCESS_VIEW, 2000);
+constexpr uint32_t UNORDERED_ACCESS_VIEW_BINDING_SHIFT = 2000; static const wchar_t* UNORDERED_ACCESS_VIEW_BINDING_SHIFT_STR = L"2000";
+// BINDING_SHIFT(CONSTANT_BUFFER, 3000);
+constexpr uint32_t CONSTANT_BUFFER_BINDING_SHIFT = 3000; static const wchar_t* CONSTANT_BUFFER_BINDING_SHIFT_STR = L"3000";
 
 typedef struct BackendContext_VK {
 
@@ -345,7 +350,7 @@ FfxErrorCode ffxGetInterfaceVK(
     backendInterface->fpBreadcrumbsWrite = BreadcrumbsWriteVK;
     backendInterface->fpBreadcrumbsPrintDeviceInfo = BreadcrumbsPrintDeviceInfoVK;
     backendInterface->fpRegisterConstantBufferAllocator = RegisterConstantBufferAllocatorVK;
-    backendInterface->fpSwapChainConfigureFrameGeneration = ffxSetFrameGenerationConfigToSwapchainVK;
+    backendInterface->fpSwapChainConfigureFrameGeneration = nullptr;// ffxSetFrameGenerationConfigToSwapchainVK;
 
     // Memory assignments
     backendInterface->scratchBuffer = scratchBuffer;
@@ -2203,8 +2208,8 @@ FfxErrorCode CreateResourceVK(
     FfxResourceDescription resourceDesc = createResourceDescription->resourceDescription;
 
     if (resourceDesc.mipCount == 0) {
-        resourceDesc.mipCount = (uint32_t)(1 + floor(log2(FFX_MAXIMUM(FFX_MAXIMUM(createResourceDescription->resourceDescription.width,
-            createResourceDescription->resourceDescription.height), createResourceDescription->resourceDescription.depth))));
+        resourceDesc.mipCount = (uint32_t)(1 + floor(log2(double(FFX_MAXIMUM(FFX_MAXIMUM(createResourceDescription->resourceDescription.width,
+            createResourceDescription->resourceDescription.height), createResourceDescription->resourceDescription.depth)))));
     }
 
     FFX_ASSERT(effectContext.nextStaticResource + 1 < effectContext.nextDynamicResource);

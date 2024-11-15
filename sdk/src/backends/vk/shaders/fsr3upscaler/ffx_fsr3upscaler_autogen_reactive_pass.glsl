@@ -22,6 +22,9 @@
 
 #version 450
 
+#define FFX_GPU
+#define FFX_GLSL
+
 #extension GL_GOOGLE_include_directive : require
 #extension GL_EXT_samplerless_texture_functions : require
 
@@ -29,7 +32,6 @@
 #define FSR3UPSCALER_BIND_SRV_INPUT_COLOR                           1
 
 #define FSR3UPSCALER_BIND_UAV_AUTOREACTIVE                          2
-#define FSR3UPSCALER_BIND_UAV_AUTOCOMPOSITION                       3
 
 #define FSR3UPSCALER_BIND_CB_FSR3UPSCALER                           4
 #define FSR3UPSCALER_BIND_CB_REACTIVE                               5
