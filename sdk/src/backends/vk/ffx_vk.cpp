@@ -1136,6 +1136,7 @@ void ConvertUTF16ToUTF8(const wchar_t* inputName, char* outputBuffer, size_t out
 
 void beginMarkerVK(BackendContext_VK* backendContext, VkCommandBuffer commandBuffer, const wchar_t* label)
 {
+    if (!backendContext->vkFunctionTable.vkCmdBeginDebugUtilsLabelEXT) return;
     constexpr size_t strLen = 64;
     char strLabel[strLen];
     ConvertUTF16ToUTF8(label, strLabel, strLen);
@@ -1155,6 +1156,7 @@ void beginMarkerVK(BackendContext_VK* backendContext, VkCommandBuffer commandBuf
 
 void endMarkerVK(BackendContext_VK* backendContext, VkCommandBuffer commandBuffer)
 {
+    if (!backendContext->vkFunctionTable.vkCmdEndDebugUtilsLabelEXT) return;
     backendContext->vkFunctionTable.vkCmdEndDebugUtilsLabelEXT(commandBuffer);
 }
 
